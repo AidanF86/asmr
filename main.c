@@ -71,39 +71,61 @@ int main()
 
 SDL_Color getColorForPoint(int numIterations)
 {
-    //int percentage = (int)((double)numIterations / (double)iterations * 100.0);
-    return pallete[numIterations];
-    /*
-    color.r = percentage / 2 * 255 / 100;
-    color.g = percentage / 3 * 255 / 100;
-    color.b = percentage / 4 * 255 / 100;
+    //return pallete[numIterations];
+    double H = (double)numIterations / (double)iterations * 360;
+    double s = 1;
+    double v = 1;
+    double C = s * v;
+    double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
+    //float m = v - C;
+    float r, g, b;
+    if(H >= 0 && H < 60)
+    {
+        r = C; g = X; b = 0;
+    }
+    else if(H >= 60 && H < 120)
+    {
+        r = X; g = C; b = 0;
+    }
+    else if(H >= 120 && H < 180)
+    {
+        r = 0; g = C; b = X;
+    }
+    else if(H >= 180 && H < 240)
+    {
+        r = 0; g = X; b = C;
+    }
+    else if(H >= 240 && H < 300)
+    {
+        r = X; g = 0; b = C;
+    }
+    else
+    {
+        r = C; g = 0; b = X;
+    }
+
+    SDL_Color color;
+    color.r = r * 255;
+    color.g = g * 255;
+    color.b = b * 255;
     color.a = 255;
-    */
+    return color;
 }
 
 // Handles rendering of the game
 void doRender(SDL_Renderer *renderer)
 {
-    //Set the drawing color to blue
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    
-    //Clear the screen (to blue)
+    //Set the background color to white
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-
-    //Set the drawing color to white
-    SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
 
     for(int x = 0; x < width; x++)
     {
         for(int i = 0; i < height; i++)
         {
-            //double xCoord = xCenter + (xCenter - ((double)x / (double)width) * zoom);
-            //double iCoord = iCenter + (iCenter - ((double)i / (double)height) * zoom);
-            double xCoord = ((double)(width - x - (width / 2)) / (double)(width / 2) + xCenter) * zoom;
-            double iCoord = ((double)(height - i - (height / 2)) / (double)(height / 2) + iCenter) * zoom;
+            double xCoord = ((double)(width - x - (width / 2)) / (double)(width / 2)) * zoom + xCenter;
+            double iCoord = ((double)(height - i - (height / 2)) / (double)(height / 2)) * zoom + iCenter;
             double complex coordinate = xCoord + iCoord * I;
-            //printf("%f + %fi  from  %f + %fi \n", xCoord, iCoord, x, i);
-            //SDL_SetRenderDrawColor(renderer, 255, x % 255, i % 255, 255);
             double complex z = 0;
             int lastIteration;
             bool headsOut = false;
