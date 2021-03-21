@@ -5,17 +5,18 @@
 #include <stdbool.h>
 #include <math.h>
 #include <complex.h>
+#include <pthread.h>
 
 void doRender(SDL_Renderer *renderer);
 int processInput(SDL_Window *window);
 
 double xCenter, iCenter, zoom;
 bool mustRender = true;
-const int width =  1000;
-const int height = 1000;
+const int width =  500;
+const int height = 500;
 int iterations = 100;
 
-SDL_Color pallete[1000];
+SDL_Color pallete[100];
 
 int main()
 {
@@ -24,7 +25,7 @@ int main()
     
     SDL_Init(SDL_INIT_VIDEO);
 
-    window = SDL_CreateWindow("Game Window",
+    window = SDL_CreateWindow("ASMR",
             SDL_WINDOWPOS_UNDEFINED, //Initial x
             SDL_WINDOWPOS_UNDEFINED, //Initial y
             width,                     //width
@@ -71,37 +72,33 @@ int main()
 
 SDL_Color getColorForPoint(int numIterations)
 {
-    //return pallete[numIterations];
+    // Modified from https://www.codespeedy.com/hsv-to-rgb-in-cpp/
     double H = (double)numIterations / (double)iterations * 360;
-    double s = 1;
-    double v = 1;
-    double C = s * v;
-    double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
-    //float m = v - C;
+    double X = (1 - abs(fmod(H / 60.0, 2) - 1));
     float r, g, b;
     if(H >= 0 && H < 60)
     {
-        r = C; g = X; b = 0;
+        r = 1; g = X; b = 0;
     }
     else if(H >= 60 && H < 120)
     {
-        r = X; g = C; b = 0;
+        r = X; g = 1; b = 0;
     }
     else if(H >= 120 && H < 180)
     {
-        r = 0; g = C; b = X;
+        r = 0; g = 1; b = X;
     }
     else if(H >= 180 && H < 240)
     {
-        r = 0; g = X; b = C;
+        r = 0; g = X; b = 1;
     }
     else if(H >= 240 && H < 300)
     {
-        r = X; g = 0; b = C;
+        r = X; g = 0; b = 1;
     }
     else
     {
-        r = C; g = 0; b = X;
+        r = 1; g = 0; b = X;
     }
 
     SDL_Color color;
